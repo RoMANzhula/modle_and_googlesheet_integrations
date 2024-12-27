@@ -7,6 +7,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -17,6 +18,9 @@ import java.util.Collections;
 
 @Service
 public class GoogleSheetsApiService {
+
+    @Value("${google.credentials.file.path}")
+    private String credentialsFilePath;
 
     private static final HttpTransport HTTP_TRANSPORT;
 
@@ -30,10 +34,10 @@ public class GoogleSheetsApiService {
 
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-    public static Sheets getSheetsService() throws IOException, GeneralSecurityException {
+    public Sheets getSheetsService() throws IOException, GeneralSecurityException {
         // Downloading google's JSON access key
         GoogleCredential credential = GoogleCredential
-                .fromStream(new FileInputStream("path to our credentials file (instruction below the code)"))
+                .fromStream(new FileInputStream(credentialsFilePath))
                 .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS))
         ;
 
@@ -43,6 +47,7 @@ public class GoogleSheetsApiService {
                 .build()
         ;
     }
+
 }
 
         // How to create a JSON credential file (google instruction: https://developers.google.com/sheets/api/quickstart/java)
